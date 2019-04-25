@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 子模块需要引入父工程的GAV -->
+    <groupId>com.hacker.framework</groupId>
+    <artifactId>openbusiness-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>hacker openbusiness parent</name>
+    <description>Hacker OpenBusiness Application Parent</description>
+
+    <!--
+       多模块项目注意点1：多模块中 父工程这里必须是 pom 而子模块一般都是jar或者war
+       pom:父工程都是pom类型
+       jar:内部调用或者是作服务使用
+       war:需要部署的项目
+     -->
+    <packaging>pom</packaging>
+
+    <properties>
+        <!-- 是否跳过单元测试的属性设置，默认为false，表示执行单元测试 -->
+        <isSkipUnitTest>false</isSkipUnitTest>
+        <spring.component.version>5.1.4.RELEASE</spring.component.version>
+        <!--
+           这里将子模块的版本统一定义成了如下，便于后面应用，如果要引用这个版本号，那么需要
+           将每个子模块的version 都要重新定义成 1.0.0-20190425 不能使用继承的，因为父工程的version
+           是 1.0-SNAPSHOT
+         -->
+        <openbusiness.jar.version>1.0.0-20190425</openbusiness.jar.version>
+    </properties>
+
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.component.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.56</version>
+        </dependency>
+
+    </dependencies>
+
+
+    <modules>
+        <module>watch</module>
+        <module>web/webpage</module>
+        <module>app/biz/commonquery</module>
+        <module>app/biz/service-impl</module>
+        <module>app/core/model</module>
+        <module>app/core/service</module>
+        <module>app/core/service</module>
+    </modules>
+
+
+</project>

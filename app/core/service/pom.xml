@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>openbusiness-parent</artifactId>
+        <groupId>com.hacker.framework</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <!--
+           指向父工程的pom.xml文件的位置，这个必须要指定，不然使用父工程的jar包是可以的
+           但是，打包（clean,install...)的时候就会报错。
+           必须要指定吗？ 其实也不是必须的，如果是在父工程下直接新建的子模块，可以不用指定这个标签
+           而我这里并不是，而是父工程下一个普通目录下的子模块，所以必须要指定。那为什么直接子模块就可以
+           不指定呢？ 这是因为 <relativePath> 都是有的，只不过直接子模块他的默认值是：../pom.xml
+        -->
+        <relativePath>../../../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+       这里的 groupId 和 version 可以继承父工程的，也可以在子模块中在去指定，这个模块我就使用继承的
+       groupId, 但是version 我在指定一下，因为后面要使用这个版本，目的是不想使用继承的
+    -->
+    <artifactId>openbusiness.core.service</artifactId>
+    <version>1.0.0-20190425</version>
+
+    <packaging>jar</packaging>
+
+
+    <dependencies>
+        
+    </dependencies>
+
+</project>
