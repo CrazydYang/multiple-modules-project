@@ -6,17 +6,27 @@
         <artifactId>openbusiness-parent</artifactId>
         <groupId>com.hacker.framework</groupId>
         <version>1.0-SNAPSHOT</version>
+        <!--
+           指向父工程的pom.xml文件的位置，这个必须要指定，不然使用父工程的jar包是可以的
+           但是，打包（clean,install...)的时候就会报错。
+           必须要指定吗？ 其实也不是必须的，如果是在父工程下直接新建的子模块，可以不用指定这个标签
+           而我这里并不是，而是父工程下一个普通目录下的子模块，所以必须要指定。那为什么直接子模块就可以
+           不指定呢？ 这是因为 <relativePath> 都是有的，只不过直接子模块他的默认值是：../pom.xml
+        -->
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+      这里的groupId 和 version 是可以直接继承父工程的，当然也可以自己指定
+      我这里不使用继承的，自己手动指定
+     -->
+    <groupId>com.hacker.framework</groupId>
     <artifactId>openbusiness.webpage</artifactId>
+    <version>1.0.0-20190425</version>
     <packaging>war</packaging>
 
     <name>openbusiness.webpage Maven Webapp</name>
-    <!-- FIXME change it to the project's website -->
-    <url>http://www.example.com</url>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -31,11 +41,15 @@
                 <!-- 测试 web 模块-->
                 <!--
                    web 模块怎么测试?
-                    1.
+                    1.首先在当前pom（或者父模块pom)中引入  maven-jetty-plugin
+                    2.在父工程中的pom中执行：mvn clean install
+                    3.install 成功后，来到 webpage 目录下，可以看到 target 目录， pom 文件这一层
+                    4.执行： mvn jetty:run(启动成功，可以看到端口信息）
+                    5.打开浏览器输入：http://localhost:8080/openbusiness.webpage/ 成功可以看到 Hello World
                 -->
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
-                <version>7.0.0.pre5</version>
+                <version>6.1.15</version>
             </plugin>
         </plugins>
 

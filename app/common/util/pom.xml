@@ -6,10 +6,39 @@
         <artifactId>openbusiness-parent</artifactId>
         <groupId>com.hacker.framework</groupId>
         <version>1.0-SNAPSHOT</version>
+        <!--
+           指向父工程的pom.xml文件的位置，这个必须要指定，不然使用父工程的jar包是可以的
+           但是，打包（clean,install...)的时候就会报错。
+           必须要指定吗？ 其实也不是必须的，如果是在父工程下直接新建的子模块，可以不用指定这个标签
+           而我这里并不是，而是父工程下一个普通目录下的子模块，所以必须要指定。那为什么直接子模块就可以
+           不指定呢？ 这是因为 <relativePath> 都是有的，只不过直接子模块他的默认值是：../pom.xml
+        -->
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+       groupId 和 version 是可以继承父模块的，但是artifactId 是不可以的，而GV 你既可以使用继承的，
+       也可以重新定义,由于我在父模块中进行了子模块的版本统一管理，version号是 1.0.0-20190425 所以
+       这里必须对 version 重新定义，不然使用父模块的是 1.0-SNAPSHOT,会找不到这个版本号而无法依赖
+     -->
+    <groupId>com.hacker.framework</groupId>
     <artifactId>openbusiness.common.util</artifactId>
+    <version>1.0.0-20190425</version>
+
+    <dependencies>
+        <!--
+           父模块中虽然引入了 spring-context 但是它是由 dependencyManagement 管理的，他只是声明依赖，并不会
+           实现引入，所以如果在子模块中如果依赖该项，还需要手动指定GA 引入进来，只是版本号由父pom进行统一
+           管理了，如果我这里指定了version，那么当期模块就是使用该版本的jar包
+        -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <!--<version>5.1.4.RELEASE</version>-->
+        </dependency>
+    </dependencies>
 
 
 </project>

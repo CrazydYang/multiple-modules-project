@@ -27,8 +27,42 @@
     <packaging>jar</packaging>
 
 
+    <!-- 导入依赖 -->
     <dependencies>
-        
+
+        <!--
+           如果当前模块依赖其他模块，则在这里引入，就可以使用里面的类了
+         -->
+        <dependency>
+            <groupId>com.hacker.framework</groupId>
+            <artifactId>openbusiness.common.util</artifactId>
+            <!--
+                这个是maven 固定的常量写法，他是默认先找当前工程pom.xml 中的version，如果当前pom.xml
+                没有version，那就说明使用了继承的父工程的version，所以他就会使用父工程的 version
+                <version>${project.version}</version>
+
+                如果我不想写 version 怎么办呢？ 如果不想写version，那么就需要有地方统一管理 version
+                在父工程中使用 dependencyManagement 进行管理即可
+             -->
+
+        </dependency>
+
+
+        <!--
+         如果父工程中没有使用版本管理器（dependencyManagement） 而只是偶那个了 dependencys
+         那么这里不指定版本可以吗? 不可以，如果只是使用了 dependencys ，那么这里要么不写该
+         依赖项，他会完完全全的从父工程中继承，要么你就写全了，包括version，不然会报错，不会
+         引入任何东西，而一般我们都是在父工程中使用 dependencyManagement ，由他来统一管理版本
+
+         父工程没有使用 dependencyManagement，而是使用了 dependencys 的情况，
+         所以这里要么不写该依赖项，要么写全；如果父工程制定了版本依赖 dependencyManagement
+         这里需要手动引入GA，但是可以不用指定版本(V)
+         -->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-context</artifactId>-->
+            <!--<version>5.1.4.RELEASE</version>-->
+        <!--</dependency>-->
     </dependencies>
 
 </project>

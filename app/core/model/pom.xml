@@ -6,10 +6,24 @@
         <artifactId>openbusiness-parent</artifactId>
         <groupId>com.hacker.framework</groupId>
         <version>1.0-SNAPSHOT</version>
+        <!--
+           指向父工程的pom.xml文件的位置，这个必须要指定，不然使用父工程的jar包是可以的
+           但是，打包（clean,install...)的时候就会报错。
+           必须要指定吗？ 其实也不是必须的，如果是在父工程下直接新建的子模块，可以不用指定这个标签
+           而我这里并不是，而是父工程下一个普通目录下的子模块，所以必须要指定。那为什么直接子模块就可以
+           不指定呢？ 这是因为 <relativePath> 都是有的，只不过直接子模块他的默认值是：../pom.xml
+        -->
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+       这里的groupId 和 version 是可以直接继承父工程的，当然也可以自己指定
+     -->
     <artifactId>openbusiness.core.model</artifactId>
+
+    <!-- 默认就是 jar -->
+    <packaging>jar</packaging>
 
 
 </project>

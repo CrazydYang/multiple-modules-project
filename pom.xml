@@ -4,7 +4,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- 子模块需要引入父工程的GAV -->
+    <!--
+        多模块项目注意点3：
+         1.打包的时候（比如 clean install package ...)一定要从*******"父模块中打包"*******，这样他会自动将parent pom 以及sub module
+           都发布到仓库
+         2.有时候我们可能需要本地依赖,（本地依赖就是构建本地仓库）那么直接在 父工程中执行 mvn clean install 即可，那其他项目怎么
+           依赖呢？
+         3.比如我新建了一个项目，我就是想依赖一下 openbusiness.common.util 里面的 BeansUtils 工具类，怎么办呢?
+         4.很简单，新项目建好后，在pom中添加依赖即可了呀
+            <dependency>
+               <groupId>com.hacker.framework</groupId>
+               <artifactId>openbusiness.common.util</artifactId>
+               <version>1.0.0-20190425</version>
+            </dependency>
+     -->
     <groupId>com.hacker.framework</groupId>
     <artifactId>openbusiness-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -26,31 +39,95 @@
         <spring.component.version>5.1.4.RELEASE</spring.component.version>
         <!--
            这里将子模块的版本统一定义成了如下，便于后面应用，如果要引用这个版本号，那么需要
-           将每个子模块的version 都要重新定义成 1.0.0-20190425 不能使用继承的，因为父工程的version
-           是 1.0-SNAPSHOT
+           将每个子模块的version 都要重新定义成 1.0.0-20190425 不能使用继承的，因为父工程的
+           version 是 1.0-SNAPSHOT
          -->
         <openbusiness.jar.version>1.0.0-20190425</openbusiness.jar.version>
     </properties>
 
 
-    <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.component.version}</version>
-        </dependency>
+    <!--
+       关于 dependencyManagement  和  dependencies 的说明
+       1.dependencies 应用场景
+          1.1 在父工程中直接通过 dependencies 引入的jar，将默认被所有子模块继承，这也就是为啥我的子模块pom中
+              无任何依赖应用，却可以直接使用父工程引入的jar中的类
+          1.2 当我将 dependencies 用 dependencyManagement 包住以后，发现1.1 中可以使用的类就无法在使用了，具体原因
+              在下面
 
-        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.56</version>
-        </dependency>
+       2.dependencyManagement 和 dependencies 的区别：
+          2.1 dependencyManagement 只是声明了依赖，并不实现引入，因此子项目中需要显示的声明需要使用的依赖
+              如果不在子项目中声明依赖，那么是不会从父项目中继承下来的；只有在子项目中写了该依赖项，并且没有
+              指定具体版本，才会从父工程中继承该项，并且version和 scope 都取自父pom，另外如果子项目中指定了具体
+              的 version ，那么会使用子项目中指定的jar版本（不再继承了）
+          2.2 dependencies 即使在子模块中不写该依赖项，子模块仍然会从父工程中继承该依赖项（全部继承）所以如果子
+              模块想直接继承就使用他好了，注意，要么不写子模块不定义该依赖项直接使用继承，要么全写，包括版本号，
+              表示使用子工程自己的，而不是继承的，可以通过修改父子模块的版本号来验证一下
 
-    </dependencies>
+        3.使用 dependencies 在多模块中容易出现 "循环依赖" 以及 "自己依赖自己"的问题，产生的原因是模块与模块之间
+          比如，我们在父模块中依赖各个子模块（其实不是依赖,确切的说是管理）比如我现在这样，在父工程中引入了2个子
+          模块，然后对他们的版本进行了管理。
+
+          此时，我在父工程中进行 clean，发现报错，原因是 openbusinsess.core.service 模块自己依赖自己
+          openbusiness.common.util 模块自己依赖自己。为什么呢? 其实很简单， 因为我没有使用 dependencyManagement
+          而是使用的 dependencies ，这样父模块中的所有依赖都会直接传递到子模块，比如 openbusiness.core.service
+          模块，这样他就自己依赖了自己，可以打开IDEA 右边的maven依赖关系结构也同样可以看到。循环依赖我就不演示了
+          也都是由于继承导致的。
+
+        4.结论：最好就是在父模块中对依赖进行 版本管理（dependencyManagement）
+     -->
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 依赖的子模块，我觉得父工程可以不依赖子模块，但是如果依赖了由父工程进行统一版本管理也是可以的-->
+
+            <dependency>
+                <groupId>com.hacker.framework</groupId>
+                <artifactId>openbusiness.common.util</artifactId>
+                <version>${openbusiness.jar.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hacker.framework</groupId>
+                <artifactId>openbusiness.core.service</artifactId>
+                <version>${openbusiness.jar.version}</version>
+            </dependency>
 
 
+            <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.component.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.56</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!--
+       多模块项目注意点2: 需要通过 modules 引入子模块的pom 路径
+     -->
     <modules>
         <module>watch</module>
         <module>web/webpage</module>
@@ -58,7 +135,8 @@
         <module>app/biz/service-impl</module>
         <module>app/core/model</module>
         <module>app/core/service</module>
-        <module>app/core/service</module>
+        <module>app/common/util</module>
+        <module>app/test</module>
     </modules>
 
 

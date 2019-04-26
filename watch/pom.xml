@@ -6,10 +6,20 @@
         <artifactId>openbusiness-parent</artifactId>
         <groupId>com.hacker.framework</groupId>
         <version>1.0-SNAPSHOT</version>
+        <!--
+           指向父工程的pom.xml文件的位置，由于当前模块是父工程下的直接子模块
+           所以可以不用指定，因为默认值就是：../pom.xml
+        -->
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+      这里的groupId 和 version 是可以直接继承父工程的，当然也可以自己指定
+     -->
     <artifactId>openbusiness.watch</artifactId>
+
+    <packaging>jar</packaging>
 
 
 </project>
